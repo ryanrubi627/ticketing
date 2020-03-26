@@ -20,12 +20,22 @@ Route::get('/', function () {
 Auth::routes();
 
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::group(['middleware' => ['auth', 'client']], function(){
+	Route::get('/home', 'HomeController@display');
+	Route::post('/create', 'HomeController@insert');
+	Route::post('/update', 'HomeController@update');
+});
 
+Route::group(['middleware' => ['auth', 'admin']], function(){
+	Route::get('/admin', 'AdminPageController@display');
+	Route::post('/admin/insert', 'AdminPageController@insert');
+	Route::post('/admin/inprogress', 'AdminPageController@status_inprogress');
+	//Route::post('/admin/resolved', 'AdminPageController@status_resolved');
+	Route::post('/admin/reopen', 'AdminPageController@status_reopen');
+	Route::get('/admin/closed_ticket', 'AdminPageController@display_closed_ticket');
+	//Route::delete('/delete/{id}', 'AdminPageController@delete');
+});
 
-
-Route::get('insert','client_page_controller@insertform');
-Route::post('create','client_page_controller@insert');
 
 
 

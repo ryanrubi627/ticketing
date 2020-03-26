@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use App\client_pages;
 
 class HomeController extends Controller
 {
@@ -22,20 +23,36 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
-        return view('home');
+    public function display(){
+      $users = client_pages::all();
+      return view('home', ['users'=>$users]);
     }
 
 
     public function insert(Request $request){
-        $ticket_number = $request->input('ticket_number');
-        $description = $request->input('description');
-        $importance = $request->input('importance');
+      $user = new client_pages;
 
-        $data=array('ticket_number'=>$ticket_number,"description"=>$description,"importance"=>$importance);
-        DB::table('client_page')->insert($data);
-        echo "Record inserted successfully.<br/>";
+      $user->name = $request->name;
+      $user->title = $request->title;
+      $user->description = $request->description;
+      $user->importance = $request->importance;
+      $user->date = $request->date;
+      $user->status = $request->status;
+
+      $user->save();
 
     }
+
+    public function update(Request $request){
+      
+      $id = $request->id;
+      $title = $request->title;
+      $description = $request->description;
+      $importance = $request->importance;
+
+      client_pages::where('ticket_number', $id)
+                    ->update(['title' => $title, 'description' => $description, 'importance' => $importance]);
+
+    }
+
 }
